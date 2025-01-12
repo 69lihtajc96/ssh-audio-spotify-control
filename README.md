@@ -26,10 +26,7 @@ cd ssh-audio-spotify-control
 chmod +x nethunter_sound_control.sh
 ```
 ```bash
-sudo cp nethunter_sound_control.sh 
-```
-```bash
-/usr/local/bin/soundctl
+sudo cp nethunter_sound_control.sh /usr/local/bin/soundctl
 ```
 
 ### **Step 2: Ensure Required Packages Are Installed**
