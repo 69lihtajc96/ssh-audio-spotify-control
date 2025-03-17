@@ -1,139 +1,120 @@
-# 🎛️ Nethunter SSH Audio & Spotify Control
-A terminal-based audio management tool for **Kali Nethunter** with SSH integration.  
-Control **system volume**, **Spotify playback**, and **remote audio settings** using a minimal terminal interface powered by `dialog`.
+# 🔊 Nethunter Sound Control Script
+> 🇬🇧 English | [🇷🇺 Русский](README.ru.md)
+
+---
+# 🔊 Nethunter Sound Control Script
+
+![Project](https://img.shields.io/badge/🔥%20%F0%9F%8E%A7%20Nethunter%20Sound%20Control%20🔥-SSH-blueviolet?style=for-the-badge)
+
+### 🚨 THIS IS NOT JUST A SCRIPT — IT'S YOUR VOICE IN THE WORLD OF SSH!
 
 ---
 
-## 🚀 **Features:**
-- 🎧 **Full Spotify Control:** Play, pause, skip tracks, and adjust Spotify volume.  
-- 🔊 **Volume Management:** Increase, decrease, and view current system volume.  
-- 📶 **Remote SSH Control:** Manage sound settings of a remote machine using SSH.  
-- ✅ **Clean UI:** Simple and interactive `dialog`-based interface.  
-- 🎹 **Hotkey Support:** Bind custom keys for controlling Spotify playback.  
+## 🎯 Description
+
+This script is a cross between a **DJ on steroids** and a **beat master**. It allows you to:
+
+- 🔊 Control the volume of a remote system via SSH.
+- 🎵 Control Spotify — pause, skip tracks forward/backward, and display the current track.
+- 🔐 Operate through a secure SSH connection.
+- 📋 Log everything that happens for troubleshooting.
 
 ---
 
-## 📦 **Installation:**
+## 🚀 Features
+✅ Increase/decrease volume by command.  
+✅ Show current volume in real-time.  
+✅ Full Spotify control using `playerctl`.  
+✅ Automatic configuration setup on first run.  
+✅ Fast startup and easy setup.  
 
-### **Step 1: Clone the Repository**
+---
+
+## 🛠️ Installation
+
+### 📂 Clone the repo
 ```bash
 git clone https://github.com/69lihtajc96/ssh-audio-spotify-control.git
-```
-```bash
 cd ssh-audio-spotify-control
-```
-```bash
-chmod +x nethunter_sound_control.sh
-```
-```bash
-sudo cp nethunter_sound_control.sh /usr/local/bin/soundctl
+chmod +x spotify_sound_control.sh
 ```
 
-### **Step 2: Ensure Required Packages Are Installed**
+### 📋 Install dependencies
+- **NetHunter (Kali Linux):**
 ```bash
-sudo apt update
+sudo apt install dialog openssh-client
 ```
+- **Arch Linux:**
 ```bash
-sudo apt install dialog openssh-client playerctl
+sudo pacman -S dialog openssh
 ```
+- **Debian/Ubuntu:**
 ```bash
-amixer xbindkeys
+sudo apt install dialog openssh-client
 ```
 
-### **Step 3: SSH Key Setup (for passwordless connection)**
+### 🛠️ Configuration
+On the first run, the script will ask you to provide:
+- 👤 **Remote Username** (e.g., `root`).
+- 🌍 **Remote Host IP** (e.g., `192.168.1.100`).
+
+These details are saved in the configuration file:  
 ```bash
-ssh-keygen -t rsa -b 4096
-```
-```bash
-ssh-copy-id user@192.168.193.1
-```
-```bash
-ssh user@192.168.193.1
+/root/.soundctl.conf
 ```
 
 ---
 
-## 🎹 **Hotkey Setup for Spotify Control (Super+Ctrl+Alt)**
-
-### **Step 1: Install `xbindkeys`**
+## 🎯 Usage
 ```bash
-sudo apt install xbindkeys
+./spotify_sound_control.sh
 ```
 
-### **Step 2: Create the Config File for Hotkeys**
+### 🔥 Main Menu
+1️⃣ **Volume Control** — manage system volume.  
+2️⃣ **Spotify Control** — manage Spotify playback.  
+3️⃣ **Exit** — exit the script.  
+
+### 🔊 Volume Control Menu
+1️⃣ **Increase Volume** — +5% volume.  
+2️⃣ **Decrease Volume** — -5% volume.  
+3️⃣ **Show Current Volume** — display current volume.  
+4️⃣ **Back to Main Menu** — return to the main menu.  
+
+### 🎵 Spotify Control Menu
+1️⃣ **Play/Pause** — pause or resume playback.  
+2️⃣ **Next Track** — skip to the next track.  
+3️⃣ **Previous Track** — skip to the previous track.  
+4️⃣ **Show Current Track** — show the currently playing track.  
+5️⃣ **Back to Main Menu** — return to the main menu.  
+
+---
+
+## ❗ Troubleshooting (if things go south)
+
+🚫 **"Error: Cannot connect to [IP]"** → Ensure the SSH service is running on the remote machine:  
 ```bash
-nano ~/.xbindkeysrc
+sudo systemctl start ssh
 ```
 
-### **Step 3: Configure Hotkeys for Spotify Control**
-```plaintext
-# Increase Spotify Volume
-"ssh user@192.168.193.1 amixer -D pulse sset Master 5%+"
-    Mod4+Control+Alt+Right
-
-# Decrease Spotify Volume
-"ssh user@192.168.193.1 amixer -D pulse sset Master 5%-"
-    Mod4+Control+Alt+Left
-
-# Play/Pause Spotify
-"ssh user@192.168.193.1 playerctl -p spotify play-pause"
-    Mod4+Control+Alt+J
-
-# Next Track
-"ssh user@192.168.193.1 playerctl -p spotify next"
-    Mod4+Control+Alt+K
-
-# Previous Track
-"ssh user@192.168.193.1 playerctl -p spotify previous"
-    Mod4+Control+Alt+H
+🔊 **"Failed to retrieve volume"** → Ensure `amixer` is installed on the remote system:  
+```bash
+sudo apt install alsa-utils
 ```
 
-### **Step 4: Reload `xbindkeys`**
+🎵 **Spotify unresponsive** → Ensure `playerctl` is installed on the remote machine:  
 ```bash
-xbindkeys --poll-rc
-```
-
-### **Step 5: Auto Start `xbindkeys` (Optional)**
-```bash
-echo "xbindkeys" >> ~/.bashrc
-```
-```bash
-source ~/.bashrc
+sudo apt install playerctl
 ```
 
 ---
 
-## 📊 **Usage:**
-### **Run the utility:**
-```bash
-soundctl
-```
+## 🤝 Contributing
 
-### **Main Menu Options:**
-- **Volume Control:** Adjust system volume and view current levels.  
-- **Spotify Control:** Manage playback and volume for the Spotify player.  
+Ideas, improvements, and feedback are welcome! Fork it, submit a pull request — and let's rock! 🚀
 
 ---
 
-## 🔒 **Security Best Practices:**
-- ✅ **Use `ssh-agent` for better security.**  
-- ✅ **Avoid storing SSH passphrases directly in scripts.**  
-- ✅ **Use a strong SSH key with a passphrase and `ssh-agent`.**
+## 📜 License
+This project is licensed under the **MIT License** — enjoy and have fun! 😎
 
----
-
-## 📄 **License:**
-```plaintext
-MIT License
-```
-This project is licensed under the MIT License – you are free to use, modify, and distribute it.
-
----
-
-## 🤝 **Contributing:**
-Pull requests are welcome! Feel free to create issues or suggest improvements.
-
----
-
-## 👨‍💻 **Author:**
-**Created by:** [69lihtajc96](https://github.com/69lihtajc96)  
