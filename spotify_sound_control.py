@@ -5,7 +5,6 @@ import time
 import select
 import os
 import shutil
-import sys
 from pathlib import Path
 
 try:
@@ -145,7 +144,7 @@ class Button:
     def contains(self, mx, my):
         return self.x1 <= mx <= self.x2 and self.y1 <= my <= self.y2
 
-def draw_ui(stdscr, cava_data, volume, track, buttons, scroll_index):
+def draw_ui(stdscr, cava_data, volume, track, buttons, scroll_index, max_track_len):
     stdscr.erase()
     h, w = stdscr.getmaxyx()
 
@@ -155,18 +154,18 @@ def draw_ui(stdscr, cava_data, volume, track, buttons, scroll_index):
         curses.doupdate()
         return
 
-    panel_height = 7  # больше панель плеера
+    panel_height = 7
     cava_height = h - panel_height - 1
 
-    # Кроваво-красная CAVA
+    # CAVA с контуром
     if cava_data:
         for i, val in enumerate(cava_data):
             col = int(i * (w / len(cava_data)))
+            bar_height = int(val / 5)
             for y in range(cava_height):
-                if y >= cava_height - int(val / 5):
-                    stdscr.addstr(y, col, "█", curses.color_pair(6))
-                else:
-                    stdscr.addstr(y, col, " ")
+                stdscr.addstr(y, col, "│", curses.color_pair(7))  # контур
+                if y >= cava_height - bar_height:
+                    stdscr.addstr(y, col, "█", curses.color_pair(6))  # красная заливка
     else:
         stdscr.addstr(0, 0, "[No CAVA]")
 
@@ -176,27 +175,24 @@ def draw_ui(stdscr, cava_data, volume, track, buttons, scroll_index):
     track_line = cava_height + 1
     left_btn, track_btn, right_btn = buttons[:3]
 
-    max_track_len = w - 10
-    display_track = track
     if len(track) > max_track_len:
-        start = scroll_index % len(track)
-        display_track = (track[start:] + "   " + track[:start])[:max_track_len]
+        start = scroll_index
+        display_track = (track + "   " + track)[start:start + max_track_len]
+    else:
+        display_track = track
 
     total_len = len(left_btn.text) + 4 + len(display_track) + 4 + len(right_btn.text)
     start_x = (w - total_len) // 2
 
-    # Левая кнопка
     color = curses.color_pair(4 if left_btn.hover else 5)
     stdscr.addstr(track_line, start_x, f" {left_btn.text} ", color)
     left_btn.set_position(start_x, track_line, width=len(left_btn.text) + 2)
 
-    # Кнопка трека
     tx = start_x + len(left_btn.text) + 4
     color = curses.color_pair(4 if track_btn.hover else 5)
     stdscr.addstr(track_line, tx, f" {display_track} ", color)
     track_btn.set_position(tx, track_line, width=len(display_track) + 2)
 
-    # Правая кнопка
     rx = tx + len(display_track) + 4
     color = curses.color_pair(4 if right_btn.hover else 5)
     stdscr.addstr(track_line, rx, f" {right_btn.text} ", color)
@@ -229,12 +225,10 @@ def main(stdscr):
     curses.start_color()
     curses.use_default_colors()
 
-    curses.init_pair(1, curses.COLOR_GREEN, -1)
-    curses.init_pair(2, curses.COLOR_YELLOW, -1)
-    curses.init_pair(3, curses.COLOR_RED, -1)
     curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_CYAN)
     curses.init_pair(5, curses.COLOR_WHITE, -1)
-    curses.init_pair(6, curses.COLOR_RED, -1)  # кроваво-красный
+    curses.init_pair(6, curses.COLOR_RED, -1)   # заливка
+    curses.init_pair(7, curses.COLOR_WHITE, -1) # контур
 
     stdscr.nodelay(True)
     stdscr.timeout(50)
@@ -247,7 +241,13 @@ def main(stdscr):
     volume = get_volume()
     track = get_current_track()
     last_update = 0
+
+    max_track_len = 30
+    scroll_delay = 0.3
+    scroll_pause = 2.0
     scroll_index = 0
+    scroll_timer = time.time()
+    scrolling = False
 
     buttons = [
         Button("<", lambda: run_async(playerctl_cmd, "previous")),
@@ -264,10 +264,23 @@ def main(stdscr):
                 volume = get_volume()
                 track = get_current_track()
                 last_update = now
-                scroll_index += 1
+
+            # Прокрутка
+            if len(track) > max_track_len:
+                if not scrolling:
+                    if time.time() - scroll_timer > scroll_pause:
+                        scrolling = True
+                        scroll_timer = time.time()
+                else:
+                    if time.time() - scroll_timer > scroll_delay:
+                        scroll_index = (scroll_index + 1) % (len(track) + 3)
+                        scroll_timer = time.time()
+            else:
+                scroll_index = 0
+                scrolling = False
 
             bars = cava.get_bars()
-            draw_ui(stdscr, bars, volume, track, buttons, scroll_index)
+            draw_ui(stdscr, bars, volume, track, buttons, scroll_index, max_track_len)
 
             try:
                 key = stdscr.getch()
