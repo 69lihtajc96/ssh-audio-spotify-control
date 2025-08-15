@@ -55,7 +55,7 @@ pip install pulsectl
 ## 🎯 Использование
 
 ```bash
-python3 [music_tui.py](./music_tui.py)
+python3 spotify_sound_control.py
 ```
 
 **Управление:**
