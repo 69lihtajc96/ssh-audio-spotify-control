@@ -3,7 +3,7 @@
 # 🔊 SSH Terminal Music Controller with CAVA
 > 🇬🇧 English | [🇷🇺 Русский](./README.ru.md)
 
-![Project](https://img.shields.io/badge/🔥%20Terminal%20Music%20Controller%20🔥-SSH-red?style=for-the-badge)
+![Project](https://img.shields.io/badge/Terminal%20Visualizer-SSH%20Control-ff0033?style=for-the-badge&labelColor=660000)
 
 ### 🚨 THIS IS NOT JUST A SCRIPT — IT’S A TERMINAL PARTY WITH VISUALS!
 
