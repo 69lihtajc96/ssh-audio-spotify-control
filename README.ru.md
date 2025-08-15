@@ -38,7 +38,7 @@ cd ssh-cava-spotify-control
 
 ### 📋 Установить зависимости
 
-* **Debian/Ubuntu/Kali/NetHunter**:
+* **Debian/Ubuntu/Kali**:
 
 ```bash
 sudo apt install python3 python3-pip pulseaudio-utils playerctl cava
