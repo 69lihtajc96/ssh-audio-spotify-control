@@ -1,3 +1,5 @@
+![SSH CAVA Spotify Control](./assets/banner.png)
+
 # 🔊 SSH Terminal Music Controller with CAVA
 > 🇬🇧 English | [🇷🇺 Русский](./README.ru.md)
 
